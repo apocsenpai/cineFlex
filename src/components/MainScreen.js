@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import styled from "styled-components";
 import MoviePage from "../pages/MoviePage/MoviePage";
@@ -7,6 +8,19 @@ import SuccessPage from "../pages/SuccessPage/SuccessPage";
 
 
 const MainScreen = ()=>{
+    const [successOrder, setSuccessOrder] = useState({
+        title:"",
+        day:"",
+        time:"",
+        seats:[],
+        name: "",
+        cpf: ""
+    });
+
+    function createFinalOrder(){
+
+    }
+
     return (
         <Router>
         <MainContainer>
@@ -16,8 +30,8 @@ const MainScreen = ()=>{
         <Routes>
             <Route path="/" element={<MoviePage/>}/>
             <Route path="/sessoes/:movieId" element={<SessionPage/>}/>
-            <Route path="/assentos/:sessionTimeId" element={<SeatsPage/> }/>
-            <Route path="/sucesso" element={<SuccessPage/> }/>
+            <Route path="/assentos/:sessionTimeId" element={<SeatsPage createFinalOrder={createFinalOrder}/> }/>
+            <Route path="/sucesso" element={<SuccessPage successOrder={successOrder}/> }/>
         </Routes>
         </MainContainer>
         </Router>

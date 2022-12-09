@@ -3,13 +3,16 @@ import Page from "../../components/Page";
 import API_URL from "../../components/apiURL";
 import OrangeButton from "../../components/OrangeButton";
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 
-const SeatsPage = () => {
+const SeatsPage = ({createFinalOrder}) => {
   const [sessionSeats, setSessionSeats] = useState(null);
   const [selectedIdSeats, setSelectedIdSeats] = useState([]);
   const { sessionTimeId } = useParams();
+  const [name, setName] = useState("");
+  const [cpf, setCpf] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const promise = axios.get(`${API_URL}showtimes/${sessionTimeId}/seats`);
@@ -33,11 +36,23 @@ const SeatsPage = () => {
     setSelectedIdSeats([...selectedIdSeats, seat.id]);
   }
 
+  function finishOrder(e) {
+    e.preventDefault();
+    const order = {
+      ids: selectedIdSeats,
+      name,
+      cpf
+    }
+    const promise =  axios.post(`${API_URL}seats/book-many`, order);
+    promise.then(res=> navigate('/sucesso'));
+    promise.catch(err=> console.log(err.response.data));
+
+  }
+
   if (!sessionSeats) {
     return <>alala</>;
   }
-  // LEMBRA DE DAR COMMIT JONATAS PELO AMOR DE DEUS DE UM COMMIT
-  // VOCE NAO CRIOU O REPO ATÉ AGORA
+
   return (
     <Page>
       <header>
@@ -69,10 +84,13 @@ const SeatsPage = () => {
           <p>Indisponível</p>
         </div>
       </SeatInfo>
-      <BuyerData />
-      <div>
-        <ConfirmButton>Reservar assento(s)</ConfirmButton>
-      </div>
+      <BuyerData
+        finishOrder={finishOrder}
+        name={name}
+        cpf={cpf}
+        setName={setName}
+        setCpf={setCpf}
+      />
       <footer>
         <div>
           <img src={sessionSeats.movie.posterURL} />
@@ -102,18 +120,31 @@ const Seat = ({ seat, selectSeats, children, isSelected }) => {
     </>
   );
 };
-const BuyerData = () => {
+const BuyerData = ({ finishOrder, name, cpf, setName, setCpf }) => {
   return (
-    <Data>
+    <Data onSubmit={finishOrder}>
       <h3>Dados do comprador</h3>
       <div>
-        <input type={`text`} />
+        <input
+          type={`text`}
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          required
+        />
         <label>Nome</label>
       </div>
       <div>
-        <input type={`text`} />
+        <input
+          type={`text`}
+          value={cpf}
+          onChange={(e) => setCpf(e.target.value)}
+          required
+        />
         <label>CPF</label>
       </div>
+      <section>
+        <ConfirmButton type={`submit`}>Reservar assento(s)</ConfirmButton>
+      </section>
     </Data>
   );
 };
@@ -178,7 +209,7 @@ const SeatButton = styled.button`
   cursor: pointer;
 `;
 
-const Data = styled.section`
+const Data = styled.form`
   padding: 0px 24px;
   h3 {
     display: flex;
@@ -220,6 +251,10 @@ const Data = styled.section`
       transform: translateY(1rem);
       transition: 150ms cubic-bezier(0.4, 0, 0.2, 1);
     }
+  }
+  & > section {
+    display: flex;
+    justify-content: center;
   }
 `;
 

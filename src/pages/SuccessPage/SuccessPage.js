@@ -2,7 +2,9 @@ import styled from "styled-components";
 import OrangeButton from "../../components/OrangeButton";
 import Page from "../../components/Page";
 
-const SuccessPage = () => {
+const SuccessPage = ({successOrder}) => {
+
+
   return (
     <Success>
       <header>
