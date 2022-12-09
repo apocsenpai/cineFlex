@@ -37,7 +37,7 @@ const SessionPage = () => {
           />
         ))}
       </SessionList>
-      <footer>
+      <footer data-test="footer">
         <div><img src={movieSession.posterURL}/></div>
         <p><span>{movieSession.title}</span></p>
       </footer>

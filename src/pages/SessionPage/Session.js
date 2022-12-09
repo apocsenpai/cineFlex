@@ -2,9 +2,9 @@ import { Link } from "react-router-dom";
 import styled from "styled-components";
 import OrangeButton from "../../components/OrangeButton";
 
-const Session = ({ id, weekday, date, showtimes }) => {
+const Session = ({ weekday, date, showtimes }) => {
   return (
-    <ShowTime>
+    <ShowTime data-test="movie-day">
       <p>
         {weekday} - {date}
       </p>
@@ -21,7 +21,7 @@ const ButtonTime = ({ time, id }) => {
   return (
     <li>
       <Link to={`/assentos/${id}`}>
-        <OrangeButton>{time}</OrangeButton>
+        <OrangeButton data-test="showtime">{time}</OrangeButton>
       </Link>
     </li>
   );

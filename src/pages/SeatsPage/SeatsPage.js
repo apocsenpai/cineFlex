@@ -6,7 +6,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 
-const SeatsPage = ({createFinalOrder}) => {
+const SeatsPage = ({ createFinalOrder }) => {
   const [sessionSeats, setSessionSeats] = useState(null);
   const [selectedIdSeats, setSelectedIdSeats] = useState([]);
   const { sessionTimeId } = useParams();
@@ -36,16 +36,19 @@ const SeatsPage = ({createFinalOrder}) => {
 
   function finishOrder(e) {
     e.preventDefault();
+    if (!selectedIdSeats.length) {
+      alert("Selecione pelo menos 1 assento!");
+      return;
+    }
     const order = {
       ids: selectedIdSeats,
       name,
-      cpf
-    }
+      cpf,
+    };
     createFinalOrder(order, sessionTimeId);
-    const promise =  axios.post(`${API_URL}seats/book-many`, order);
-    promise.then(res=> navigate('/sucesso'));
-    promise.catch(err=> console.log(err.response.data));
-
+    const promise = axios.post(`${API_URL}seats/book-many`, order);
+    promise.then((res) => navigate("/sucesso"));
+    promise.catch((err) => console.log(err.response.data));
   }
 
   if (!sessionSeats) {
@@ -90,7 +93,7 @@ const SeatsPage = ({createFinalOrder}) => {
         setName={setName}
         setCpf={setCpf}
       />
-      <footer>
+      <footer data-test="footer">
         <div>
           <img src={sessionSeats.movie.posterURL} />
         </div>
@@ -110,6 +113,7 @@ const Seat = ({ seat, selectSeats, children, isSelected }) => {
   return (
     <>
       <SeatButton
+        data-test="seat"
         isSelected={isSelected}
         onClick={() => selectSeats(seat)}
         isAvailable={isAvailable}
@@ -124,7 +128,8 @@ const BuyerData = ({ finishOrder, name, cpf, setName, setCpf }) => {
     <Data onSubmit={finishOrder}>
       <h3>Dados do comprador</h3>
       <div>
-        <input
+        <DataInput
+          data-test="client-name"
           type={`text`}
           value={name}
           onChange={(e) => setName(e.target.value)}
@@ -133,7 +138,8 @@ const BuyerData = ({ finishOrder, name, cpf, setName, setCpf }) => {
         <label>Nome</label>
       </div>
       <div>
-        <input
+        <DataInput
+          data-test="client-cpf"
           type={`text`}
           value={cpf}
           onChange={(e) => setCpf(e.target.value)}
@@ -142,7 +148,7 @@ const BuyerData = ({ finishOrder, name, cpf, setName, setCpf }) => {
         <label>CPF</label>
       </div>
       <section>
-        <ConfirmButton type={`submit`}>Reservar assento(s)</ConfirmButton>
+        <ConfirmButton data-test="book-seat-btn" type={`submit`}>Reservar assento(s)</ConfirmButton>
       </section>
     </Data>
   );
@@ -199,11 +205,25 @@ const SeatList = styled.ul`
 const SeatButton = styled.button`
   width: 26px;
   height: 26px;
-  background-color: ${({ isSelected, isAvailable }) =>
-    isAvailable ? (isSelected ? "#1AAE9E" : "#c3cfd9") : "#fbe192"};
+  background-color: ${({ isSelected, isAvailable }) => {
+    if (isAvailable) {
+      if (isSelected) {
+        return "#1AAE9E";
+      }
+      return "#c3cfd9";
+    }
+    return "#fbe192";
+  }};
   border: 1px solid
-    ${({ isSelected, isAvailable }) =>
-      isAvailable ? (isSelected ? "#0E7D71" : "#808f9d") : "#f7c52b"};
+    ${({ isSelected, isAvailable }) => {
+      if (isAvailable) {
+        if (isSelected) {
+          return "#0E7D71";
+        }
+        return "#808f9d";
+      }
+      return "#f7c52b";
+    }};
   border-radius: 12px;
   cursor: pointer;
 `;
@@ -222,38 +242,42 @@ const Data = styled.form`
   div {
     padding-top: 10px;
     position: relative;
-    input {
-      width: 327px;
-      height: 51px;
-      padding-left: 16px;
-      font-size: 18px;
-      border-radius: 3px;
-      border: 1px solid #d4d4d4;
-      transition: 150ms cubic-bezier(0.4, 0, 0.2, 1);
-      &:focus {
-        outline: none;
-        border: 1.5px solid #1a73e8;
-        & ~ label {
-          transform: translateY(-50%) scale(0.8);
-          padding: 0 0.2rem;
-          background-color: #fff;
-          color: #1a73e8;
-        }
-      }
-    }
     label {
       position: absolute;
       left: 16px;
       color: #afafaf;
       font-size: 18px;
       pointer-events: none;
-      transform: translateY(1rem);
       transition: 150ms cubic-bezier(0.4, 0, 0.2, 1);
     }
   }
   & > section {
     display: flex;
     justify-content: center;
+  }
+`;
+
+const DataInput = styled.input`
+  width: 327px;
+  height: 51px;
+  padding-left: 16px;
+  font-size: 18px;
+  border-radius: 3px;
+  border: 1px solid #d4d4d4;
+  transition: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  & ~ label {
+    transform: ${({ value }) =>
+      value ? "translateY(-50%) scale(0.8)" : "translateY(1rem)"};
+    padding: 0 0.2rem;
+    background-color: #fff;
+  }
+  &:focus {
+    outline: none;
+    border: 1.5px solid #1a73e8;
+    & ~ label {
+      transform: translateY(-50%) scale(0.8);
+      color: #1a73e8;
+    }
   }
 `;
 

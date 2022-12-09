@@ -30,7 +30,7 @@ const MoviePage = () => {
 const Movie = ({ id, posterURL }) => {
   return (
     <>
-      <li>
+      <li data-test="movie">
         <Link to={`/sessoes/${id}`}>
           <img src={posterURL} />
         </Link>

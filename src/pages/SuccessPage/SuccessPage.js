@@ -29,16 +29,16 @@ const SuccessPage = ({successOrder}) => {
         <h2>Pedido feito com sucesso!</h2>
       </header>
       <section>
-        <div>
+        <div data-test="movie-info">
             <h3>Filme e sessão</h3>
             <p>{session.movie.title}</p>
             <p>{session.day.date} {session.name}</p>
         </div>
-        <div>
+        <div data-test="seats-info">
             <h3>Ingressos</h3>
             {filteredSeats.map(({name})=><p key={name}>Assento {name}</p>)}
         </div>
-        <div>
+        <div data-test="client-info">
             <h3>Comprador</h3>
             <p>Nome: {name}</p>
             <p>CPF: {cpf}</p>
@@ -46,7 +46,7 @@ const SuccessPage = ({successOrder}) => {
       </section>
       <div>
 
-        <BackToHome><Link to="/">Voltar para Home</Link></BackToHome>
+        <BackToHome><Link to="/" data-test="go-home-btn">Voltar para Home</Link></BackToHome>
 
       </div>
     </Success>
