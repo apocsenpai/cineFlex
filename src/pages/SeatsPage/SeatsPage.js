@@ -25,9 +25,7 @@ const SeatsPage = ({createFinalOrder}) => {
       alert("Esse assento não está disponível");
       return;
     }
-
     seat.selected = !seat.selected;
-
     if (!seat.selected) {
       const filteredSeats = selectedIdSeats.filter((id) => id !== seat.id);
       setSelectedIdSeats(filteredSeats);
@@ -43,6 +41,7 @@ const SeatsPage = ({createFinalOrder}) => {
       name,
       cpf
     }
+    createFinalOrder(order, sessionTimeId);
     const promise =  axios.post(`${API_URL}seats/book-many`, order);
     promise.then(res=> navigate('/sucesso'));
     promise.catch(err=> console.log(err.response.data));

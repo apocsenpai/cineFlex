@@ -9,18 +9,13 @@ import SuccessPage from "../pages/SuccessPage/SuccessPage";
 
 const MainScreen = ()=>{
     const [successOrder, setSuccessOrder] = useState({
-        title:"",
-        day:"",
-        time:"",
-        seats:[],
-        name: "",
-        cpf: ""
+            ids: [],
+            name: "",
+            cpf: ""
     });
-
-    function createFinalOrder(){
-
+    function createFinalOrder(finalOrder, sessionTimeId){
+        setSuccessOrder({...setSuccessOrder, order: finalOrder, sessionId: sessionTimeId});
     }
-
     return (
         <Router>
         <MainContainer>

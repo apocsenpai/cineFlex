@@ -1,9 +1,27 @@
+import axios from "axios";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 import OrangeButton from "../../components/OrangeButton";
 import Page from "../../components/Page";
+import API_URL from "../../components/apiURL";
+import { Link } from "react-router-dom";
 
 const SuccessPage = ({successOrder}) => {
 
+  const {sessionId, order} = successOrder;
+  const {name, cpf, ids} = order;
+  const [session, setSession] = useState(null);
+
+  useEffect(()=>{
+    const promise = axios.get(`${API_URL}showtimes/${sessionId}/seats`);
+    promise.then(res=>setSession(res.data));
+  },[]);
+  console.log(session)
+  if(!session){
+    return <>lalala</>;
+  }
+
+  const filteredSeats = session.seats.filter(({id})=> ids.includes(id));
 
   return (
     <Success>
@@ -13,22 +31,23 @@ const SuccessPage = ({successOrder}) => {
       <section>
         <div>
             <h3>Filme e sessão</h3>
-            <p>Enola Holmes</p>
-            <p>24/06/2021 15:00</p>
+            <p>{session.movie.title}</p>
+            <p>{session.day.date} {session.name}</p>
         </div>
         <div>
             <h3>Ingressos</h3>
-            <p>Assento 15</p>
-            <p>Assento 16</p>
+            {filteredSeats.map(({name})=><p key={name}>Assento {name}</p>)}
         </div>
         <div>
             <h3>Comprador</h3>
-            <p>Nome: João da Silva Sauro</p>
-            <p>CPF: 123.456.789-10</p>
+            <p>Nome: {name}</p>
+            <p>CPF: {cpf}</p>
         </div>
       </section>
       <div>
-        <BackToHome>Voltar para Home</BackToHome>
+
+        <BackToHome><Link to="/">Voltar para Home</Link></BackToHome>
+
       </div>
     </Success>
   );
@@ -66,5 +85,9 @@ const BackToHome = styled(OrangeButton)`
   width: 225px;
   height: 42px;
   margin-top: 70px;
+  a{
+    text-decoration: none;
+    color: #fff;
+  }
 `;
 export default SuccessPage;
