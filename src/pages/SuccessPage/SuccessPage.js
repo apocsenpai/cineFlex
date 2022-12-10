@@ -16,7 +16,6 @@ const SuccessPage = ({successOrder}) => {
     const promise = axios.get(`${API_URL}showtimes/${sessionId}/seats`);
     promise.then(res=>setSession(res.data));
   },[]);
-  console.log(session)
   if(!session){
     return <>lalala</>;
   }

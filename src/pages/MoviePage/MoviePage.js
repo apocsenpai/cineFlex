@@ -4,9 +4,10 @@ import Page from "../../components/Page";
 import API_URL from "../../components/apiURL";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import SkeletonLoading from "../../components/SkeletonLoading/SkeletonLoading";
 
 const MoviePage = () => {
-  const [movies, setMovies] = useState([]);
+  const [movies, setMovies] = useState(null);
   useEffect(() => {
     const promise = axios.get(`${API_URL}movies`);
     promise.then((r) => setMovies(r.data));
@@ -19,9 +20,12 @@ const MoviePage = () => {
         <h2>Selecione o filme</h2>
       </header>
       <MovieList>
-        {movies.map(({ id, posterURL }) => (
-          <Movie key={id} id={id} posterURL={posterURL} />
-        ))}
+
+        {!movies
+          ? <SkeletonLoading width={"145px"} height={"209px"} number={10}/>
+          : movies.map(({ id, posterURL }) => (
+              <Movie key={id} id={id} posterURL={posterURL} />
+            ))}
       </MovieList>
     </Page>
   );

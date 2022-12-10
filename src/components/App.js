@@ -6,6 +6,6 @@ const App = ()=>{
     <MainScreen/>
    </>
   );
-}
+};
 
 export default App;

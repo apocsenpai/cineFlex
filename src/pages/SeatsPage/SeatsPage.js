@@ -47,7 +47,7 @@ const SeatsPage = ({ createFinalOrder }) => {
     };
     createFinalOrder(order, sessionTimeId);
     const promise = axios.post(`${API_URL}seats/book-many`, order);
-    promise.then((res) => navigate("/sucesso"));
+    promise.then(() => navigate("/sucesso"));
     promise.catch((err) => console.log(err.response.data));
   }
 
