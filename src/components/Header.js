@@ -10,7 +10,7 @@ const Header = () => {
     }
   return (
     <header>
-      {(pathname === "/" || pathname === "/sucesso") ? "" : <button onClick={goBackOnePage}><img src={backImg}/></button>}
+      {(pathname === "/" || pathname === "/sucesso") ? "" : <button data-test="go-home-header-btn" onClick={goBackOnePage}><img src={backImg}/></button>}
       <h1>CINEFLEX</h1>
     </header>
   );
