@@ -8,17 +8,13 @@ import SuccessPage from "../pages/SuccessPage/SuccessPage";
 import Header from "./Header";
 
 const MainScreen = () => {
-  const [successOrder, setSuccessOrder] = useState({
-    ids: [],
-    name: "",
-    cpf: "",
-  });
+  const [successOrder, setSuccessOrder] = useState({});
 
-  function createFinalOrder(finalOrder, sessionTimeId) {
+  function createFinalOrder(order, sessionId) {
     setSuccessOrder({
       ...setSuccessOrder,
-      order: finalOrder,
-      sessionId: sessionTimeId,
+      order,
+      sessionId
     });
   }
 
@@ -44,7 +40,6 @@ const MainScreen = () => {
 };
 
 const MainContainer = styled.div`
-  min-height: 90vh;
   & > header {
     position: fixed;
     z-index: 1;

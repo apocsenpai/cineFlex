@@ -37,7 +37,7 @@ const StyledSkeleton = styled.section`
         display: flex;
         gap: 10px;
         padding-left: 10px;
-        margin-top: 20px;
+        margin-top: 10px;
     }
 `;
 

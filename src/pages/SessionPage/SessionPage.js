@@ -24,7 +24,7 @@ const SessionPage = () => {
       <SessionList>
         {!movieSession ? (
           <SkeletonLoading width={"100%"} height={"100px"} number={10}>
-            <SkeletonLoading width={"70%"} height={"20px"} text={true} />
+            <SkeletonLoading width={"200px"} height={"20px"} text={true} />
             <section>
               <SkeletonLoading width={"83px"} height={"43px"} number={2} />
             </section>

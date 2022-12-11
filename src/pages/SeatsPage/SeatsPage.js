@@ -1,17 +1,16 @@
 import styled from "styled-components";
 import Page from "../../components/Page";
 import API_URL from "../../components/apiURL";
-import OrangeButton from "../../components/OrangeButton";
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
+import DataForm from "./DataForm";
 
 const SeatsPage = ({ createFinalOrder }) => {
   const [sessionSeats, setSessionSeats] = useState(null);
   const [selectedIdSeats, setSelectedIdSeats] = useState([]);
   const { sessionTimeId } = useParams();
-  const [name, setName] = useState("");
-  const [cpf, setCpf] = useState("");
+  const [buyers, setBuyers] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -27,10 +26,20 @@ const SeatsPage = ({ createFinalOrder }) => {
     }
     seat.selected = !seat.selected;
     if (!seat.selected) {
-      const filteredSeats = selectedIdSeats.filter((id) => id !== seat.id);
-      setSelectedIdSeats(filteredSeats);
+      const confirmDelete = window.confirm(
+        "Você quer realmente remover o assento?"
+      );
+      if (confirmDelete) {
+        const filteredSeats = selectedIdSeats.filter((id) => id !== seat.id);
+        const filteredBuyers = buyers.filter(
+          ({ idAssento }) => idAssento !== seat.id
+        );
+        setBuyers(filteredBuyers);
+        setSelectedIdSeats(filteredSeats);
+      }
       return;
     }
+    setBuyers([...buyers, { idAssento: seat.id, nome: "", cpf: "" }]);
     setSelectedIdSeats([...selectedIdSeats, seat.id]);
   }
 
@@ -42,8 +51,7 @@ const SeatsPage = ({ createFinalOrder }) => {
     }
     const order = {
       ids: selectedIdSeats,
-      name,
-      cpf,
+      compradores: buyers,
     };
     createFinalOrder(order, sessionTimeId);
     const promise = axios.post(`${API_URL}seats/book-many`, order);
@@ -52,7 +60,7 @@ const SeatsPage = ({ createFinalOrder }) => {
   }
 
   if (!sessionSeats) {
-    return <>alala</>;
+    return <></>;
   }
 
   return (
@@ -86,12 +94,10 @@ const SeatsPage = ({ createFinalOrder }) => {
           <p>Indisponível</p>
         </div>
       </SeatInfo>
-      <BuyerData
+      <DataForm
         finishOrder={finishOrder}
-        name={name}
-        cpf={cpf}
-        setName={setName}
-        setCpf={setCpf}
+        buyers={buyers}
+        setBuyers={setBuyers}
       />
       <footer data-test="footer">
         <div>
@@ -107,7 +113,6 @@ const SeatsPage = ({ createFinalOrder }) => {
     </Page>
   );
 };
-
 const Seat = ({ seat, selectSeats, children, isSelected }) => {
   const { isAvailable } = seat;
   return (
@@ -123,37 +128,6 @@ const Seat = ({ seat, selectSeats, children, isSelected }) => {
     </>
   );
 };
-const BuyerData = ({ finishOrder, name, cpf, setName, setCpf }) => {
-  return (
-    <Data onSubmit={finishOrder}>
-      <h3>Dados do comprador</h3>
-      <div>
-        <DataInput
-          data-test="client-name"
-          type={`text`}
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          required
-        />
-        <label>Nome</label>
-      </div>
-      <div>
-        <DataInput
-          data-test="client-cpf"
-          type={`text`}
-          value={cpf}
-          onChange={(e) => setCpf(e.target.value)}
-          required
-        />
-        <label>CPF</label>
-      </div>
-      <section>
-        <ConfirmButton data-test="book-seat-btn" type={`submit`}>Reservar assento(s)</ConfirmButton>
-      </section>
-    </Data>
-  );
-};
-
 const SeatInfo = styled.section`
   display: flex;
   width: 100%;
@@ -191,7 +165,6 @@ const SeatInfo = styled.section`
     }
   }
 `;
-
 const SeatList = styled.ul`
   width: 100%;
   display: flex;
@@ -201,7 +174,6 @@ const SeatList = styled.ul`
   gap: 18px 7px;
   padding: 0px 24px;
 `;
-
 const SeatButton = styled.button`
   width: 26px;
   height: 26px;
@@ -227,64 +199,4 @@ const SeatButton = styled.button`
   border-radius: 12px;
   cursor: pointer;
 `;
-
-const Data = styled.form`
-  padding: 0px 24px;
-  h3 {
-    display: flex;
-    width: 100%;
-    height: 40px;
-    align-items: center;
-    justify-content: center;
-    font-weight: 400;
-    font-size: 18px;
-  }
-  div {
-    padding-top: 10px;
-    position: relative;
-    label {
-      position: absolute;
-      left: 16px;
-      color: #afafaf;
-      font-size: 18px;
-      pointer-events: none;
-      transition: 150ms cubic-bezier(0.4, 0, 0.2, 1);
-    }
-  }
-  & > section {
-    display: flex;
-    justify-content: center;
-  }
-`;
-
-const DataInput = styled.input`
-  width: 327px;
-  height: 51px;
-  padding-left: 16px;
-  font-size: 18px;
-  border-radius: 3px;
-  border: 1px solid #d4d4d4;
-  transition: 150ms cubic-bezier(0.4, 0, 0.2, 1);
-  & ~ label {
-    transform: ${({ value }) =>
-      value ? "translateY(-50%) scale(0.8)" : "translateY(1rem)"};
-    padding: 0 0.2rem;
-    background-color: #fff;
-  }
-  &:focus {
-    outline: none;
-    border: 1.5px solid #1a73e8;
-    & ~ label {
-      transform: translateY(-50%) scale(0.8);
-      color: #1a73e8;
-    }
-  }
-`;
-
-const ConfirmButton = styled(OrangeButton)`
-  width: 225px;
-  height: 42px;
-  margin-top: 40px;
-`;
-
 export default SeatsPage;

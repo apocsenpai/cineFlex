@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 const Page = styled.main`
   margin-top: 67px;
-  margin-bottom: 135px;
+  margin-bottom: 200px;
   & > header {
     height: 110px;
     width: 100%;

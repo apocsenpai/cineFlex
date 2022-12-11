@@ -6,21 +6,20 @@ import Page from "../../components/Page";
 import API_URL from "../../components/apiURL";
 import { Link } from "react-router-dom";
 
-const SuccessPage = ({successOrder}) => {
-
-  const {sessionId, order} = successOrder;
-  const {name, cpf, ids} = order;
+const SuccessPage = ({ successOrder }) => {
+  const { sessionId, order } = successOrder;
+  const { ids, compradores } = order;
   const [session, setSession] = useState(null);
 
-  useEffect(()=>{
+  useEffect(() => {
     const promise = axios.get(`${API_URL}showtimes/${sessionId}/seats`);
-    promise.then(res=>setSession(res.data));
-  },[]);
-  if(!session){
+    promise.then((res) => setSession(res.data));
+  }, []);
+  if (!session) {
     return <>lalala</>;
   }
 
-  const filteredSeats = session.seats.filter(({id})=> ids.includes(id));
+  const filteredSeats = session.seats.filter(({ id }) => ids.includes(id));
 
   return (
     <Success>
@@ -29,29 +28,43 @@ const SuccessPage = ({successOrder}) => {
       </header>
       <section>
         <div data-test="movie-info">
-            <h3>Filme e sessão</h3>
-            <p>{session.movie.title}</p>
-            <p>{session.day.date} {session.name}</p>
+          <h3>Filme e sessão</h3>
+          <p>{session.movie.title}</p>
+          <p>
+            {session.day.date} {session.name}
+          </p>
         </div>
         <div data-test="seats-info">
-            <h3>Ingressos</h3>
-            {filteredSeats.map(({name})=><p key={name}>Assento {name}</p>)}
+          <h3>Ingressos</h3>
+          {filteredSeats.map(({ name }) => (
+            <p key={name}>Assento {name}</p>
+          ))}
         </div>
         <div data-test="client-info">
-            <h3>Comprador</h3>
-            <p>Nome: {name}</p>
-            <p>CPF: {cpf}</p>
+          <h3>Comprador</h3>
+          {compradores.map((c) => (
+            <Client key={c.idAssento} name={c.nome} cpf={c.cpf} />
+          ))}
         </div>
       </section>
       <div>
-
-        <BackToHome><Link to="/" data-test="go-home-btn">Voltar para Home</Link></BackToHome>
-
+        <BackToHome>
+          <Link to="/" data-test="go-home-btn">
+            Voltar para Home
+          </Link>
+        </BackToHome>
       </div>
     </Success>
   );
 };
-
+const Client = ({name, cpf}) => {
+  return (
+    <>
+      <p>Nome: {name}</p>
+      <p>CPF: {cpf}</p>
+    </>
+  );
+};
 const Success = styled(Page)`
   & > header {
     h2 {
@@ -63,19 +76,19 @@ const Success = styled(Page)`
       line-height: 28px;
     }
   }
-  &>section{
+  & > section {
     padding: 0px 29px;
     display: flex;
     flex-direction: column;
     gap: 40px;
     color: #293845;
-    h3{
-        font-size: 24px;
-        margin-bottom: 10px;
+    h3 {
+      font-size: 24px;
+      margin-bottom: 10px;
     }
-    p{
-        font-size: 22px;
-        margin-bottom: 5px;
+    p {
+      font-size: 22px;
+      margin-bottom: 5px;
     }
   }
 `;
@@ -84,7 +97,7 @@ const BackToHome = styled(OrangeButton)`
   width: 225px;
   height: 42px;
   margin-top: 70px;
-  a{
+  a {
     text-decoration: none;
     color: #fff;
   }
