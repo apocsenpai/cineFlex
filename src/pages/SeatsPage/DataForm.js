@@ -2,7 +2,6 @@ import styled from "styled-components";
 import OrangeButton from "../../components/OrangeButton";
 
 const DataForm = ({ finishOrder, buyers, setBuyers }) => {
-
   function changeBuyersData(e, id) {
     const changedBuyersList = buyers.map((b) =>
       b.idAssento === id ? { ...b, [e.target.name]: e.target.value } : b

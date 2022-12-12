@@ -19,6 +19,7 @@ const SeatsPage = ({ createFinalOrder }) => {
     promise.catch((err) => console.log(err.response.data));
   }, []);
 
+  console.log(buyers)
   function selectSeats(seat) {
     if (!seat.isAvailable) {
       alert("Esse assento não está disponível");
@@ -36,7 +37,9 @@ const SeatsPage = ({ createFinalOrder }) => {
         );
         setBuyers(filteredBuyers);
         setSelectedIdSeats(filteredSeats);
+        return;
       }
+      seat.selected = !seat.selected;
       return;
     }
     setBuyers([...buyers, { idAssento: seat.id, nome: "", cpf: "" }]);
